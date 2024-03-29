@@ -8,7 +8,7 @@ import requests as re
 
 
 # Parses strings with '+'s in between words
-def parse_spaces(query):
+def parse_query(query):
     return_string = ""
 
     # Iterate through spaces
