@@ -405,7 +405,7 @@ submitbutton=Button(canvas,width=button_width+5,height=button_height,borderwidth
 
 geometry2.append([submitbutton,canvas.winfo_screenwidth()/2-20,480])
 
-prevbutton=Button(canvas,width=button_width+8,height=button_height,text="Previous Page",font=("Arial",12,"underline"))
+prevbutton=Button(canvas,width=button_width+8,height=button_height,text="Previous Page",font=("Arial",12,"underline"),command=prevpage)
 
 
 geometry2.append([prevbutton,2,0])
