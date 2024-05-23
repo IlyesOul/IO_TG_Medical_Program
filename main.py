@@ -34,6 +34,7 @@ def setdata1():
 
 def submit():
     setdata2()
+    text=""
     data = pd.read_csv("Heart_Disease_Prediction.csv")
     # print(data.head())
     # print()
@@ -57,12 +58,12 @@ def submit():
     forest_ensemble.fit(x_train, y_train)
     prediction_result = forest_ensemble.predict([prompt_results])
 
-    print(f"Based on your current conditions, we've predicted that you ", end='')
+    text+="Based on your current conditions, we've predicted that you "
 
     if prediction_result[0] == "Presence":
-        print("may have disease present in your body ")
+        text+="may have disease present in your body "
     else:
-        print("are disease free! ")
+        text+="are disease free!\n"
 
     if prediction_result[0] == "Presence":
         # Beginning of web-scrapping
@@ -131,7 +132,7 @@ def submit():
 
         for n in soup.find_all("li", "TrT0Xe"):
             solutions.append(n.text)
-            print(n)
+            text+=n
 
 
         # Iterate through results and locate solution
@@ -142,11 +143,11 @@ def submit():
 
         # Display predicted disease and solutions
 
-        print(f"Based on your current conditions, we predict that you may have: {target_condition}")
-        print("We suggest that you do the following in order to quell your condition:")
+        text+=f"\nBased on your current conditions, we predict that you may have: {target_condition}\n"
+        text+="We suggest that you do the following in order to quell your condition:"
 
         for solution in target_solutions:
-            print(solution)
+            text+=solution
     else:
 
         # Prevention suggestions
@@ -173,10 +174,16 @@ def submit():
 
         # Display predicted disease and solutions
 
-        print("Here are some steps to take to prevent heart disease")
+        text+="Here are some steps to take to prevent heart disease"
 
         for solution in target_solutions:
-            print(solution)
+            text+=solution
+
+    for i, x1, x2 in geometry2:
+        i.place_forget()
+    window.update()
+    print(text)
+
 
 def setdata2():
     prompt_results.append(int(x.get()))
