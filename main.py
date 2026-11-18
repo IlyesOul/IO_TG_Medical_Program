@@ -8,8 +8,10 @@ import requests as re
 from tkinter import *
 from PIL import ImageTk, Image
 
-button_width=5
-button_height=2
+button_width = 5
+button_height = 2
+
+
 # Parses strings with '+'s in between words
 def parse_query(query):
     return_string = ""
@@ -32,9 +34,10 @@ def setdata1():
     prompt_results.append(int(ekgbox.get()))
     prompt_results.append(int(beatscale.get()))
 
+
 def submit():
     setdata2()
-    text=""
+    text = ""
     data = pd.read_csv("Heart_Disease_Prediction.csv")
     # print(data.head())
     # print()
@@ -49,21 +52,21 @@ def submit():
     rfe_model.fit_transform(X=X, y=Y)
 
     # Obtain test/train data
-    x_train = X[:int(len(X) * .75)]
-    x_test = X[int(len(X) * .75):]
+    x_train = X[: int(len(X) * 0.75)]
+    x_test = X[int(len(X) * 0.75) :]
 
-    y_train = Y[:int(len(X) * .75)]
-    y_test = Y[int(len(X) * .75):]
+    y_train = Y[: int(len(X) * 0.75)]
+    y_test = Y[int(len(X) * 0.75) :]
     forest_ensemble = RandomForestClassifier(n_estimators=30)
     forest_ensemble.fit(x_train, y_train)
     prediction_result = forest_ensemble.predict([prompt_results])
 
-    text+="Based on your current conditions, we've predicted that you "
+    text += "Based on your current conditions, we've predicted that you "
 
     if prediction_result[0] == "Presence":
-        text+="may have disease present in your body "
+        text += "may have disease present in your body "
     else:
-        text+="are disease free!\n"
+        text += "are disease free!\n"
 
     if prediction_result[0] == "Presence":
         # Beginning of web-scrapping
@@ -87,7 +90,7 @@ def submit():
             else:
                 url_prompt += "high blood sugar"
 
-        if prompt_results[6]> 100:
+        if prompt_results[6] > 100:
             if len(url_prompt) > 36:
                 url_prompt += " and a high heartbeat"
             else:
@@ -97,7 +100,7 @@ def submit():
 
         # Make request and collect results
         headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
         }
 
         url = f"https://www.google.com/search?q={url_prompt}&rlz=1C1CHBF_enUS968US968&oq={url_prompt}&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCTEzNzU0ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8"
@@ -132,8 +135,7 @@ def submit():
 
         for n in soup.find_all("li", "TrT0Xe"):
             solutions.append(n.text)
-            text+=n
-
+            text += n
 
         # Iterate through results and locate solution
         target_solutions = []
@@ -143,11 +145,11 @@ def submit():
 
         # Display predicted disease and solutions
 
-        text+=f"\nBased on your current conditions, we predict that you may have: {target_condition}\n"
-        text+="We suggest that you do the following in order to quell your condition:"
+        text += f"\nBased on your current conditions, we predict that you may have: {target_condition}\n"
+        text += "We suggest that you do the following in order to quell your condition:"
 
         for solution in target_solutions:
-            text+=solution
+            text += solution
     else:
 
         # Prevention suggestions
@@ -155,7 +157,7 @@ def submit():
 
         # Make query request
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
         }
         request = re.get(url, headers=headers).text
 
@@ -174,10 +176,10 @@ def submit():
 
         # Display predicted disease and solutions
 
-        text+="Here are some steps to take to prevent heart disease"
+        text += "Here are some steps to take to prevent heart disease"
 
         for solution in target_solutions:
-            text+=solution
+            text += solution
 
     for i, x1, x2 in geometry2:
         i.place_forget()
@@ -193,246 +195,440 @@ def setdata2():
     prompt_results.append(int(t.get()))
     prompt_results.append(int(sg.get()))
 
+
 def nextpage():
     setdata1()
-    for i,x1,y1 in geometry:
+    for i, x1, y1 in geometry:
         i.place_forget()
-    for i,x1,y1 in geometry2:
-        i.place(x=x1,y=y1)
+    for i, x1, y1 in geometry2:
+        i.place(x=x1, y=y1)
 
-    #iterate through each first column of each row and destroy the widgets from the canvases
-    #use place_forget to remove all widgets from both canvases
-    #use a for loop to iterate through the 2D arrays and replace the widgets in the proper x and y values
-    #repeat steps in prevpage method
+    # iterate through each first column of each row and destroy the widgets from the canvases
+    # use place_forget to remove all widgets from both canvases
+    # use a for loop to iterate through the 2D arrays and replace the widgets in the proper x and y values
+    # repeat steps in prevpage method
+
 
 def prevpage():
-    prompt_results=[]
+    prompt_results = []
     for i, x1, y1 in geometry2:
         i.place_forget()
     for i, x1, y1 in geometry:
         i.place(x=x1, y=y1)
 
-window=Tk()
+
+window = Tk()
 
 window.geometry("6000x6000")
 window.update()
 
-geometry=[]
-#make a 2D array with x rows (based on number of widgets in canvas) and 3 columns that store the widget and the x and y values
-canvas=Canvas(window,width=window.winfo_screenwidth(),height=window.winfo_screenheight())
+geometry = []
+# make a 2D array with x rows (based on number of widgets in canvas) and 3 columns that store the widget and the x and y values
+canvas = Canvas(
+    window, width=window.winfo_screenwidth(), height=window.winfo_screenheight()
+)
 canvas.pack()
 
-agelabel=Label(canvas,text="Age?",font=(10))
-agelabel.place(x=canvas.winfo_screenwidth()/2,y=0)
+agelabel = Label(canvas, text="Age?", font=(10))
+agelabel.place(x=canvas.winfo_screenwidth() / 2, y=0)
+
+geometry.append([agelabel, canvas.winfo_screenwidth() / 2, 0])
+
+agescale = Scale(
+    canvas,
+    from_=100,
+    to=0,
+    tickinterval=10,
+    font=(20),
+    length=1000,
+    resolution=1,
+    orient=HORIZONTAL,
+)
+agescale.place(x=150, y=40)
+
+geometry.append([agescale, 150, 40])
+
+genderlabel = Label(canvas, text="Gender?", font=(15))
+genderlabel.place(x=canvas.winfo_screenwidth() / 2 - 15, y=130)
+
+geometry.append([genderlabel, canvas.winfo_screenwidth() / 2 - 15, 130])
+
+z = IntVar()
+
+y = IntVar()
+
+malebutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=z,
+    value=0,
+    height=button_height,
+    text="Male",
+    font=("Arial", 12),
+)
+malebutton.place(x=canvas.winfo_screenwidth() / 2 - 60, y=button_height + 160)
+
+
+geometry.append([malebutton, canvas.winfo_screenwidth() / 2 - 60, button_height + 160])
+
+femalebutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=z,
+    value=1,
+    height=button_height,
+    text="Female",
+    font=("Arial", 12),
+)
+femalebutton.place(x=canvas.winfo_screenwidth() / 2 + 40, y=button_height + 160)
+
+geometry.append(
+    [femalebutton, canvas.winfo_screenwidth() / 2 + 40, button_height + 160]
+)
+
+chestlabel = Label(canvas, text="What kind of chest pains are you feeling?", font=(10))
+chestlabel.place(x=canvas.winfo_screenwidth() / 2 - 150, y=200)
+
+geometry.append([chestlabel, canvas.winfo_screenwidth() / 2 - 150, 200])
+
+typicalbutton = Radiobutton(
+    canvas,
+    width=button_width + 5,
+    variable=y,
+    value=1,
+    height=button_height,
+    text="typical angina",
+    font=("Arial", 10),
+)
+typicalbutton.place(x=100, y=250)
+
+geometry.append([typicalbutton, 100, 250])
+
+atypicalbutton = Radiobutton(
+    canvas,
+    width=button_width + 5,
+    variable=y,
+    value=2,
+    height=button_height,
+    text="atypical angina",
+    font=("Arial", 10),
+)
+atypicalbutton.place(x=400, y=250)
+
+geometry.append([atypicalbutton, 400, 250])
+
+nontypicalbutton = Radiobutton(
+    canvas,
+    width=button_width + 8,
+    variable=y,
+    value=3,
+    height=button_height,
+    text="non-typical angina",
+    font=("Arial", 10),
+)
+nontypicalbutton.place(x=700, y=250)
+
+geometry.append([nontypicalbutton, 700, 250])
+
+asymptomaticbutton = Radiobutton(
+    canvas,
+    width=button_width + 10,
+    variable=y,
+    value=4,
+    height=button_height,
+    text="asymptomatic angina",
+    font=("Arial", 10),
+)
+asymptomaticbutton.place(x=1000, y=250)
 
-geometry.append([agelabel,canvas.winfo_screenwidth()/2,0])
+geometry.append([asymptomaticbutton, 1000, 250])
 
-agescale=Scale(canvas,from_=100,to=0,tickinterval=10,font=(20),length=1000,resolution=1,orient=HORIZONTAL)
-agescale.place(x=150,y=40)
 
-geometry.append([agescale,150,40])
+pressurelabel = Label(canvas, text="What is your blood pressure?", font=(15))
+pressurelabel.place(x=canvas.winfo_screenwidth() / 2 - 110, y=290)
 
-genderlabel=Label(canvas,text="Gender?",font=(15))
-genderlabel.place(x=canvas.winfo_screenwidth()/2-15,y=130)
+geometry.append([pressurelabel, canvas.winfo_screenwidth() / 2 - 110, 290])
 
-geometry.append([genderlabel,canvas.winfo_screenwidth()/2-15,130])
+pressurebox = Entry(canvas, width=20, borderwidth=3.0, font=(15))
+pressurebox.place(x=canvas.winfo_screenwidth() / 2 - 90, y=320)
 
-z=IntVar()
+geometry.append([pressurebox, canvas.winfo_screenwidth() / 2 - 90, 320])
 
-y=IntVar()
+chollabel = Label(canvas, text="What is your cholesterol?", font=(15))
+chollabel.place(x=canvas.winfo_screenwidth() / 2 - 90, y=360)
 
-malebutton = Radiobutton(canvas,width=button_width,variable=z,value=0,height=button_height,text="Male",font=("Arial",12))
-malebutton.place(x=canvas.winfo_screenwidth()/2-60,y=button_height+160)
+geometry.append([chollabel, canvas.winfo_screenwidth() / 2 - 90, 360])
 
+cholbox = Entry(canvas, width=20, borderwidth=3.0, font=(15))
+cholbox.place(x=canvas.winfo_screenwidth() / 2 - 90, y=390)
 
-geometry.append([malebutton,canvas.winfo_screenwidth()/2-60,button_height+160])
+geometry.append([cholbox, canvas.winfo_screenwidth() / 2 - 90, 390])
 
-femalebutton = Radiobutton(canvas,width=button_width,variable=z,value=1,height=button_height,text="Female",font=("Arial",12))
-femalebutton.place(x=canvas.winfo_screenwidth()/2+40,y=button_height+160)
+ekglabel = Label(canvas, text="If any, what is the result of your EKG test?", font=(15))
+ekglabel.place(x=canvas.winfo_screenwidth() / 2 - 150, y=420)
 
-geometry.append([femalebutton,canvas.winfo_screenwidth()/2+40,button_height+160])
+geometry.append([ekglabel, canvas.winfo_screenwidth() / 2 - 150, 420])
 
-chestlabel=Label(canvas,text="What kind of chest pains are you feeling?",font=(10))
-chestlabel.place(x=canvas.winfo_screenwidth()/2-150,y=200)
+ekgbox = Entry(canvas, width=20, borderwidth=3.0, font=(15))
+ekgbox.place(x=canvas.winfo_screenwidth() / 2 - 90, y=450)
 
-geometry.append([chestlabel,canvas.winfo_screenwidth()/2-150,200])
+geometry.append([ekgbox, canvas.winfo_screenwidth() / 2 - 90, 450])
 
-typicalbutton = Radiobutton(canvas,width=button_width+5,variable=y,value=1,height=button_height,text="typical angina",font=("Arial",10))
-typicalbutton.place(x=100,y=250)
+beatlabel = Label(
+    canvas,
+    text="When your heart is under stress, what's the highest rate at which it can beat?",
+    font=(15),
+)
+beatlabel.place(x=canvas.winfo_screenwidth() / 2 - 300, y=480)
 
-geometry.append([typicalbutton,100,250])
+geometry.append([beatlabel, canvas.winfo_screenwidth() / 2 - 300, 480])
 
-atypicalbutton = Radiobutton(canvas,width=button_width+5,variable=y,value=2,height=button_height,text="atypical angina",font=("Arial",10))
-atypicalbutton.place(x=400,y=250)
+beatscale = Scale(
+    canvas,
+    from_=100,
+    to=30,
+    tickinterval=10,
+    font=(20),
+    length=1000,
+    resolution=1,
+    orient=HORIZONTAL,
+)
+beatscale.place(x=200, y=510)
 
-geometry.append([atypicalbutton,400,250])
+geometry.append([beatscale, 200, 510])
 
-nontypicalbutton = Radiobutton(canvas,width=button_width+8,variable=y,value=3,height=button_height,text="non-typical angina",font=("Arial",10))
-nontypicalbutton.place(x=700,y=250)
+Nextbutton = Button(
+    canvas,
+    text="Next Page",
+    width=button_width + 5,
+    height=button_height,
+    borderwidth=2,
+    font=("Arial", 12, "underline"),
+    command=nextpage,
+)
+Nextbutton.place(x=canvas.winfo_screenwidth() - 120, y=0)
 
-geometry.append([nontypicalbutton,700,250])
+geometry.append([Nextbutton, canvas.winfo_screenwidth() - 120, 0])
 
-asymptomaticbutton = Radiobutton(canvas,width=button_width+10,variable=y,value=4,height=button_height,text="asymptomatic angina",font=("Arial",10))
-asymptomaticbutton.place(x=1000,y=250)
+# make all canvas widgets here
 
-geometry.append([asymptomaticbutton,1000,250])
+# make a 2D array with x rows (based on number of widgets in canvas) and 3 columns that store the widget and the x and y values
 
+geometry2 = []
 
-pressurelabel=Label(canvas,text="What is your blood pressure?",font=(15))
-pressurelabel.place(x=canvas.winfo_screenwidth()/2-110,y=290)
+exlabel = Label(
+    canvas, text="Do you experience angina chest pain when you exercise?", font=(15)
+)
 
-geometry.append([pressurelabel,canvas.winfo_screenwidth()/2-110,290])
+x = IntVar()
 
-pressurebox=Entry(canvas,width=20,borderwidth=3.0,font=(15))
-pressurebox.place(x=canvas.winfo_screenwidth()/2-90,y=320)
+geometry2.append([exlabel, canvas.winfo_screenwidth() / 2 - 220, 30])
 
-geometry.append([pressurebox,canvas.winfo_screenwidth()/2-90,320])
+yesbutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=x,
+    value=1,
+    height=button_height,
+    text="Yes",
+    font=("Arial", 12),
+)
 
-chollabel=Label(canvas,text="What is your cholesterol?",font=(15))
-chollabel.place(x=canvas.winfo_screenwidth()/2-90,y=360)
+geometry2.append([yesbutton, canvas.winfo_screenwidth() / 2 - 60, 60])
 
-geometry.append([chollabel,canvas.winfo_screenwidth()/2-90,360])
+nobutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=x,
+    value=0,
+    height=button_height,
+    text="No",
+    font=("Arial", 12),
+)
 
-cholbox=Entry(canvas,width=20,borderwidth=3.0,font=(15))
-cholbox.place(x=canvas.winfo_screenwidth()/2-90,y=390)
+geometry2.append([nobutton, canvas.winfo_screenwidth() / 2 + 40, 60])
 
-geometry.append([cholbox,canvas.winfo_screenwidth()/2-90,390])
+deplabel = Label(
+    canvas,
+    text="If you experience any levels of S/T Depression, indicate it now: (mm)",
+    font=(15),
+)
 
-ekglabel=Label(canvas,text="If any, what is the result of your EKG test?",font=(15))
-ekglabel.place(x=canvas.winfo_screenwidth()/2-150,y=420)
 
-geometry.append([ekglabel,canvas.winfo_screenwidth()/2-150,420])
+geometry2.append([deplabel, canvas.winfo_screenwidth() / 2 - 270, 110])
 
-ekgbox=Entry(canvas,width=20,borderwidth=3.0,font=(15))
-ekgbox.place(x=canvas.winfo_screenwidth()/2-90,y=450)
+depbox = Entry(canvas, width=20, borderwidth=3.0, font=(15))
 
-geometry.append([ekgbox,canvas.winfo_screenwidth()/2-90,450])
 
-beatlabel=Label(canvas,text="When your heart is under stress, what's the highest rate at which it can beat?",font=(15))
-beatlabel.place(x=canvas.winfo_screenwidth()/2-300,y=480)
+geometry2.append([depbox, canvas.winfo_screenwidth() / 2 - 90, 140])
 
-geometry.append([beatlabel,canvas.winfo_screenwidth()/2-300,480])
+slopelabel = Label(
+    canvas, text="Please enter the slope of your S/T Depression:", font=(15)
+)
 
-beatscale=Scale(canvas,from_=100,to=30,tickinterval=10,font=(20),length=1000,resolution=1,orient=HORIZONTAL)
-beatscale.place(x=200,y=510)
 
-geometry.append([beatscale,200,510])
+s = IntVar()
 
-Nextbutton=Button(canvas,text="Next Page",width=button_width+5,height=button_height,borderwidth=2,font=("Arial",12,"underline"),command=nextpage)
-Nextbutton.place(x=canvas.winfo_screenwidth()-120,y=0)
+geometry2.append([slopelabel, canvas.winfo_screenwidth() / 2 - 180, 180])
 
-geometry.append([Nextbutton,canvas.winfo_screenwidth()-120,0])
+upslopingbutton = Radiobutton(
+    canvas,
+    width=button_width + 5,
+    variable=s,
+    value=1,
+    height=button_height,
+    text="Upsloping",
+    font=("Arial", 12),
+)
 
-#make all canvas widgets here
 
-#make a 2D array with x rows (based on number of widgets in canvas) and 3 columns that store the widget and the x and y values
+geometry2.append([upslopingbutton, canvas.winfo_screenwidth() / 2 - 150, 210])
 
-geometry2=[]
+flatbutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=s,
+    value=2,
+    height=button_height,
+    text="Flat",
+    font=("Arial", 12),
+)
 
-exlabel=Label(canvas,text="Do you experience angina chest pain when you exercise?",font=(15))
 
-x=IntVar()
+geometry2.append([flatbutton, canvas.winfo_screenwidth() / 2 - 5, 210])
 
-geometry2.append([exlabel,canvas.winfo_screenwidth()/2-220,30])
+downslopingbutton = Radiobutton(
+    canvas,
+    width=button_width + 5,
+    variable=s,
+    value=3,
+    height=button_height,
+    text="Downsloping",
+    font=("Arial", 12),
+)
 
-yesbutton = Radiobutton(canvas,width=button_width,variable=x,value=1,height=button_height,text="Yes",font=("Arial",12))
 
-geometry2.append([yesbutton,canvas.winfo_screenwidth()/2-60,60])
+geometry2.append([downslopingbutton, canvas.winfo_screenwidth() / 2 + 90, 210])
 
-nobutton = Radiobutton(canvas,width=button_width,variable=x,value=0,height=button_height,text="No",font=("Arial",12))
+vessellabel = Label(
+    canvas,
+    text="How many of your major vessels have been colored by fluoroscopy? (0-3)",
+    font=(15),
+)
 
-geometry2.append([nobutton,canvas.winfo_screenwidth()/2+40,60])
 
-deplabel=Label(canvas,text="If you experience any levels of S/T Depression, indicate it now: (mm)",font=(15))
+geometry2.append([vessellabel, canvas.winfo_screenwidth() / 2 - 260, 240])
 
+vesselbox = Entry(canvas, width=20, borderwidth=3.0, font=(15))
 
-geometry2.append([deplabel,canvas.winfo_screenwidth()/2-270,110])
 
-depbox=Entry(canvas,width=20,borderwidth=3.0,font=(15))
+geometry2.append([vesselbox, canvas.winfo_screenwidth() / 2 - 90, 290])
 
+thallabel = Label(
+    canvas,
+    text="Please enter the results of any Thallium testing you may have had:",
+    font=(15),
+)
 
-geometry2.append([depbox,canvas.winfo_screenwidth()/2-90,140])
 
-slopelabel=Label(canvas,text="Please enter the slope of your S/T Depression:",font=(15))
+t = IntVar()
 
+geometry2.append([thallabel, canvas.winfo_screenwidth() / 2 - 240, 320])
 
-s=IntVar()
+normalbutton = Radiobutton(
+    canvas,
+    width=button_width,
+    variable=t,
+    value=3,
+    height=button_height,
+    text="Normal",
+    font=("Arial", 12),
+)
 
-geometry2.append([slopelabel,canvas.winfo_screenwidth()/2-180,180])
 
-upslopingbutton = Radiobutton(canvas,width=button_width+5,variable=s,value=1,height=button_height,text="Upsloping",font=("Arial",12))
+geometry2.append([normalbutton, canvas.winfo_screenwidth() / 2 - 200, 350])
 
+fixedbutton = Radiobutton(
+    canvas,
+    width=button_width + 10,
+    variable=t,
+    value=6,
+    height=button_height,
+    text="Fixed Defect",
+    font=("Arial", 12),
+)
 
-geometry2.append([upslopingbutton,canvas.winfo_screenwidth()/2-150,210])
 
-flatbutton = Radiobutton(canvas,width=button_width,variable=s,value=2,height=button_height,text="Flat",font=("Arial",12))
+geometry2.append([fixedbutton, canvas.winfo_screenwidth() / 2 - 80, 350])
 
+reversablebutton = Radiobutton(
+    canvas,
+    width=button_width + 10,
+    variable=t,
+    value=7,
+    height=button_height,
+    text="Reversable Defect",
+    font=("Arial", 12),
+)
 
-geometry2.append([flatbutton,canvas.winfo_screenwidth()/2-5,210])
 
-downslopingbutton = Radiobutton(canvas,width=button_width+5,variable=s,value=3,height=button_height,text="Downsloping",font=("Arial",12))
+geometry2.append([reversablebutton, canvas.winfo_screenwidth() / 2 + 120, 350])
 
+submitbutton = Button(
+    canvas,
+    width=button_width + 5,
+    height=button_height,
+    borderwidth=2,
+    text="Submit",
+    font=(12),
+    command=submit,
+)
 
-geometry2.append([downslopingbutton,canvas.winfo_screenwidth()/2+90,210])
 
-vessellabel=Label(canvas,text="How many of your major vessels have been colored by fluoroscopy? (0-3)",font=(15))
+prevbutton = Button(
+    canvas,
+    width=button_width + 8,
+    height=button_height,
+    text="Previous Page",
+    font=("Arial", 12, "underline"),
+    command=prevpage,
+)
 
 
-geometry2.append([vessellabel,canvas.winfo_screenwidth()/2-260,240])
+geometry2.append([prevbutton, 2, 0])
 
-vesselbox=Entry(canvas,width=20,borderwidth=3.0,font=(15))
+sugarlabel = Label(
+    canvas,
+    text="Is your fasting blood sugar level over 120 mg/dl? (1 for true and 0 for false): ",
+    font=(15),
+)
 
 
-geometry2.append([vesselbox,canvas.winfo_screenwidth()/2-90,290])
+geometry2.append(
+    [
+        sugarlabel,
+        canvas.winfo_screenwidth() / 2 - 270,
+        canvas.winfo_screenheight() - 340,
+    ]
+)
 
-thallabel=Label(canvas,text="Please enter the results of any Thallium testing you may have had:",font=(15))
+sg = IntVar()
 
+tsg = Radiobutton(canvas, text="True", variable=sg, value=1, font=(12))
 
-t=IntVar()
 
-geometry2.append([thallabel,canvas.winfo_screenwidth()/2-240,320])
+fsg = Radiobutton(canvas, text="False", variable=sg, value=0, font=(12))
+# Blood sugar question
+geometry2.append([sugarlabel, canvas.winfo_screenwidth() / 2 - 270, 410])
 
-normalbutton = Radiobutton(canvas,width=button_width,variable=t,value=3,height=button_height,text="Normal",font=("Arial",12))
+# True button
+geometry2.append([tsg, canvas.winfo_screenwidth() / 2 - 50, 450])
 
+# False button
+geometry2.append([fsg, canvas.winfo_screenwidth() / 2 + 70, 450])
 
-geometry2.append([normalbutton,canvas.winfo_screenwidth()/2-200,350])
-
-fixedbutton = Radiobutton(canvas,width=button_width+10,variable=t,value=6,height=button_height,text="Fixed Defect",font=("Arial",12))
-
-
-geometry2.append([fixedbutton,canvas.winfo_screenwidth()/2-80,350])
-
-reversablebutton = Radiobutton(canvas,width=button_width+10,variable=t,value=7,height=button_height,text="Reversable Defect",font=("Arial",12))
-
-
-geometry2.append([reversablebutton,canvas.winfo_screenwidth()/2+120,350])
-
-submitbutton=Button(canvas,width=button_width+5,height=button_height,borderwidth=2,text="Submit",font=(12),command=submit)
-
-
-geometry2.append([submitbutton,canvas.winfo_screenwidth()/2-20,480])
-
-prevbutton=Button(canvas,width=button_width+8,height=button_height,text="Previous Page",font=("Arial",12,"underline"),command=prevpage)
-
-
-geometry2.append([prevbutton,2,0])
-
-sugarlabel=Label(canvas,text="Is your fasting blood sugar level over 120 mg/dl? (1 for true and 0 for false): ",font=(15))
-
-
-geometry2.append([sugarlabel,canvas.winfo_screenwidth()/2-270,canvas.winfo_screenheight()-340])
-
-sg=IntVar()
-
-tsg=Radiobutton(canvas,text="True",variable=sg,value=1,font=(12))
-
-
-geometry2.append([tsg,canvas.winfo_screenwidth()/2-50,canvas.winfo_screenheight()-300])
-
-fsg=Radiobutton(canvas,text="False",variable=sg,value=0,font=(12))
-
-
-geometry2.append([fsg,canvas.winfo_screenwidth()/2+70,canvas.winfo_screenheight()-300])
+# Submit button
+geometry2.append([submitbutton, canvas.winfo_screenwidth() / 2 - 20, 520])
 
 
 window.update()
@@ -452,11 +648,11 @@ rfe_model = RFE(RandomForestClassifier())
 rfe_model.fit_transform(X=X, y=Y)
 
 # Obtain test/train data
-x_train = X[:int(len(X)*.75)]
-x_test = X[int(len(X)*.75):]
+x_train = X[: int(len(X) * 0.75)]
+x_test = X[int(len(X) * 0.75) :]
 
-y_train = Y[:int(len(X)*.75)]
-y_test = Y[int(len(X)*.75):]
+y_train = Y[: int(len(X) * 0.75)]
+y_test = Y[int(len(X) * 0.75) :]
 forest_ensemble = RandomForestClassifier(n_estimators=30)
 forest_ensemble.fit(x_train, y_train)
 # Optimization of n_estimators
